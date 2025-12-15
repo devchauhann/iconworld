@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SvGify - Icons</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+      /*-----------------------------------*/
+      /* 1. Design Tokens (Zinc Palette)   */
+      /*-----------------------------------*/
+      :root {
+        --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+
+        /* Light Theme */
+        --bg-app: #ffffff;
+        --bg-panel: #ffffff;
+        --bg-surface: #f4f4f5; /* zinc-100 */
+        --bg-surface-hover: #e4e4e7; /* zinc-200 */
+        
+        --border-subtle: #e4e4e7; /* zinc-200 */
+        --border-strong: #d4d4d8; /* zinc-300 */
+        
+        --text-main: #09090b; /* zinc-950 */
+        --text-muted: #71717a; /* zinc-500 */
+        --text-faint: #a1a1aa; /* zinc-400 */
+        
+        --primary: #18181b; /* zinc-900 */
+        --primary-fg: #fafafa;
+        
+        --ring-offset: 2px;
+        --ring-color: #18181b;
+        
+        --radius-sm: 6px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-overlay: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+        --sidebar-width: 260px;
+        --header-height: 60px;
+      }
+
+      html[data-theme="dark"] {
+        /* Dark Theme */
+        --bg-app: #09090b; /* zinc-950 */
+        --bg-panel: #09090b;
+        --bg-surface: #18181b; /* zinc-900 */
+        --bg-surface-hover: #27272a; /* zinc-800 */
+        
+        --border-subtle: #27272a; /* zinc-800 */
+        --border-strong: #3f3f46; /* zinc-700 */
+        
+        --text-main: #fafafa; /* zinc-50 */
+        --text-muted: #a1a1aa; /* zinc-400 */
+        --text-faint: #52525b; /* zinc-600 */
+        
+        --primary: #fafafa;
+        --primary-fg: #09090b;
+        
+        --ring-color: #fafafa;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+      
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg-app);
+        color: var(--text-main);
+        font-size: 14px;
+        line-height: 1.5;
+        overflow: hidden; /* App-like layout */
+      }
+
+      /* Focus States */
+      :focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 var(--ring-offset) var(--bg-app), 0 0 0 calc(var(--ring-offset) + 2px) var(--ring-color);
+      }
+
+      button { font-family: inherit; cursor: pointer; }
+      a { text-decoration: none; color: inherit; }
+
+      /* Scrollbars */
+      .scroll-area::-webkit-scrollbar { width: 6px; height: 6px; }
+      .scroll-area::-webkit-scrollbar-track { background: transparent; }
+      .scroll-area::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; }
+      .scroll-area::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+      /*-----------------------------------*/
+      /* 2. App Layout (Sidebar + Main)    */
+      /*-----------------------------------*/
+      .app-shell {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: var(--sidebar-width);
+        background-color: var(--bg-panel);
+        border-right: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        z-index: 20;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .sidebar-header {
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Changed for close button */
+        padding: 0 1.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text-main);
+      }
+
+      .brand svg {
+        color: var(--text-main);
+      }
+      
+      #sidebar-close-btn {
+        display: none; /* Hidden on desktop */
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+
+      .sidebar-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+      }
+
+      .sidebar-section-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+        padding-left: 0.5rem;
+      }
+
+      /* Search inside Sidebar */
+      .search-wrapper {
+        margin-bottom: 2rem;
+        position: relative;
+      }
+
+      #search-bar {
+        width: 100%;
+        padding: 0.6rem 0.75rem 0.6rem 2.25rem;
+        background: var(--bg-surface);
+        border: 1px solid transparent;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        color: var(--text-main);
+        transition: all 0.2s;
+      }
+
+      #search-bar:hover { background: var(--bg-surface-hover); }
+      #search-bar:focus { 
+        background: var(--bg-app); 
+        border-color: var(--border-strong); 
+        box-shadow: 0 1px 2px var(--shadow-sm);
+      }
+
+      .search-icon-svg {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+        width: 14px;
+        height: 14px;
+      }
+
+      /* Search Dropdown */
+      .search-dropdown {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0; right: 0;
+        background: var(--bg-panel);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-overlay);
+        z-index: 50;
+        display: none;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .search-dropdown.show { display: block; animation: fadeIn 0.1s ease; }
+
+      .search-dropdown-header {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        background: var(--bg-surface);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .search-result-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0.75rem;
+        cursor: pointer;
+        transition: background 0.1s;
+      }
+      .search-result-item:hover { background: var(--bg-surface); }
+      .search-result-name { font-weight: 500; font-size: 0.875rem; }
+      .search-result-category { margin-left: auto; font-size: 0.75rem; color: var(--text-muted); }
+
+      /* Category Tabs (Vertical List) */
+      #category-tabs {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .tab-button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        text-align: left;
+        transition: all 0.2s;
+      }
+
+      .tab-button:hover {
+        background: var(--bg-surface);
+        color: var(--text-main);
+      }
+
+      .tab-button.active {
+        background: var(--bg-surface);
+        color: var(--text-main);
+        font-weight: 600;
+      }
+      
+      .tab-button.active::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        background: var(--text-main);
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .sidebar-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-subtle);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      /* Mobile Overlay - Added styles */
+      .mobile-menu-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(2px);
+        z-index: 15; /* Below sidebar (20) */
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .mobile-menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Main Area */
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-app);
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Main Header */
+      .main-header {
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        border-bottom: 1px solid var(--border-subtle);
+        background: rgba(var(--bg-app), 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 10;
+        flex-shrink: 0;
+      }
+
+      .header-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+      .header-title span { color: var(--text-main); font-weight: 600; }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-app);
+        border-radius: var(--radius-md);
+        color: var(--text-main);
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-icon:hover { background: var(--bg-surface); border-color: var(--border-strong); }
+      
+      .btn-icon.active {
+        background: var(--bg-surface-hover);
+        color: #ef4444; /* Red for heart */
+        border-color: #ef4444;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-fg);
+        border: none;
+        padding: 0 1rem;
+        height: 32px;
+        border-radius: var(--radius-md);
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: opacity 0.2s;
+      }
+      .btn-primary:hover { opacity: 0.9; }
+
+      /* Mobile Toggle */
+      #mobile-menu-btn { display: none; border: none; background: transparent; }
+
+      /* Mobile Header Search Button */
+      #mobile-header-search-btn {
+        display: none; /* Only show on mobile */
+        align-items: center;
+        justify-content: center;
+        width: 32px; height: 32px;
+        color: var(--text-main);
+        margin-right: 0.5rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+      }
+
+      /* Content Scroll Area */
+      .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+        scroll-behavior: smooth;
+      }
+
+      /* Hero (Inside Main) */
+      .hero-mini {
+        margin-bottom: 2rem;
+      }
+      .hero-mini h1 { font-size: 1.5rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem; }
+      .hero-mini p { font-size: 0.9rem; color: var(--text-muted); max-width: 600px; }
+
+      /* Mobile In-Page Search */
+      .mobile-search-container {
+        display: none; /* Hidden on Desktop */
+        margin-bottom: 1.5rem;
+        position: relative;
+      }
+      
+      .mobile-search-container input {
+        width: 100%;
+        padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        font-size: 1rem; /* Larger font for mobile input */
+        color: var(--text-main);
+      }
+      
+      .mobile-search-container input:focus {
+        border-color: var(--border-strong);
+        background: var(--bg-app);
+      }
+      
+      .mobile-search-container svg {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+        width: 18px; height: 18px;
+      }
+
+      /* Grid */
+      #icon-grid-wrapper { width: 100%; }
+      
+      #icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 1rem;
+      }
+
+      .icon-card {
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-app);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+      }
+
+      .icon-card:hover {
+        background: var(--bg-surface);
+        border-color: var(--border-strong);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .icon-card svg {
+        width: 24px;
+        height: 24px;
+        color: var(--text-main);
+        margin-bottom: 0.75rem;
+        transition: transform 0.2s;
+      }
+      
+      .icon-card:hover svg { transform: scale(1.1); }
+
+      .icon-card span {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        max-width: 90%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* No Results & Loading */
+      #no-results {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem;
+        color: var(--text-muted);
+        display: none;
+      }
+
+      .load-more-container { text-align: center; margin-top: 3rem; display: none; }
+      .load-more-container.show { display: block; }
+      
+      .load-more-btn {
+        background: var(--bg-app);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-main);
+        padding: 0.5rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      .load-more-btn:hover { background: var(--bg-surface); border-color: var(--border-strong); }
+      
+      .pagination-info { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+      /*-----------------------------------*/
+      /* 3. Modal (Right Sheet Style)      */
+      /*-----------------------------------*/
+      #modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(2px);
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #modal-overlay.show { opacity: 1; visibility: visible; }
+
+      #modal-content {
+        background: var(--bg-panel);
+        width: 100%;
+        max-width: 800px; /* Wider to accommodate controls */
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-overlay);
+        border: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transform: scale(0.96);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        margin: 1rem;
+      }
+
+      #modal-overlay.show #modal-content { transform: scale(1); }
+
+      .modal-body {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      @media (min-width: 640px) {
+        .modal-body { flex-direction: row; height: 500px; }
+      }
+
+      .preview-pane {
+        flex: 1;
+        background: var(--bg-surface);
+        /* Subtle grid pattern for preview */
+        background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+        background-size: 20px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        min-height: 250px;
+      }
+
+      .details-pane {
+        flex: 1;
+        padding: 2rem;
+        background: var(--bg-panel);
+        border-left: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .modal-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .modal-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      #modal-icon-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      .modal-btn {
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-btn:hover { background: var(--bg-surface); color: var(--text-main); }
+      
+      #modal-favorite-btn.active {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+      }
+      #modal-favorite-btn.active svg {
+        fill: currentColor;
+      }
+
+      /* Control Groups */
+      .controls-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .control-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .control-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-main);
+      }
+      
+      .control-value {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+      }
+
+      /* Custom Color Picker UI */
+      .color-picker-wrapper {
+        position: relative;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 0.35rem 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-width: 140px;
+      }
+      .color-picker-wrapper:hover {
+        background: var(--bg-surface-hover);
+        border-color: var(--border-strong);
+      }
+      .color-circle {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: currentColor;
+        border: 1px solid rgba(0,0,0,0.1);
+      }
+      .color-text {
+        font-size: 0.875rem;
+        color: var(--text-main);
+      }
+      #icon-color {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      /* Sliders */
+      input[type="range"] {
+        width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--border-strong);
+        outline: none;
+        -webkit-appearance: none;
+        margin-top: 0.5rem;
+        touch-action: none; /* Prevents scroll interference on mobile */
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--bg-app);
+        border: 2px solid var(--text-main); /* Zinc style thumb */
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+      }
+
+      /* Toggle Switch */
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+      }
+      .toggle-switch input { opacity: 0; width: 0; height: 0; }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: var(--border-strong);
+        transition: .4s;
+        border-radius: 20px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider { background-color: var(--text-main); }
+      input:checked + .slider:before { transform: translateX(16px); }
+
+      .code-container {
+        margin-top: auto;
+        position: relative;
+      }
+
+      #modal-svg-code {
+        display: block;
+        background: var(--bg-surface);
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--text-main);
+        white-space: pre-wrap;
+        overflow-x: auto;
+        border: 1px solid var(--border-subtle);
+        height: 100px;
+      }
+
+      #copy-button {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        background: var(--bg-panel);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-sm);
+        color: var(--text-main);
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      #copy-button:hover { border-color: var(--text-muted); }
+
+      /*-----------------------------------*/
+      /* 4. Toast Notifications            */
+      /*-----------------------------------*/
+      #toast-container {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 2000;
+        pointer-events: none;
+      }
+
+      .toast {
+        background: var(--primary);
+        color: var(--primary-fg);
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        font-weight: 500;
+        box-shadow: var(--shadow-overlay);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: toastIn 0.3s forwards;
+        pointer-events: auto;
+        min-width: 200px;
+      }
+      
+      .toast.hiding {
+        animation: toastOut 0.3s forwards;
+      }
+
+      @keyframes toastIn { to { opacity: 1; transform: translateY(0); } }
+      @keyframes toastOut { to { opacity: 0; transform: translateY(10px); } }
+
+      /*-----------------------------------*/
+      /* Responsive                        */
+      /*-----------------------------------*/
+      @media (max-width: 1024px) {
+        #icon-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+      }
+
+      @media (max-width: 768px) {
+        .app-shell { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; } /* Fixed mobile scroll */
+        
+        .sidebar {
+          position: fixed;
+          top: 0; left: 0; bottom: 0;
+          width: 280px;
+          z-index: 20;
+          transform: translateX(-100%);
+          box-shadow: var(--shadow-overlay);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .sidebar.active { transform: translateX(0); }
+        
+        #sidebar-close-btn { display: block; } 
+        
+        /* Mobile Header */
+        .main-header { padding: 0 1rem; }
+        
+        #mobile-menu-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px; height: 32px;
+          color: var(--text-main);
+          margin-right: 0.5rem;
+        }
+        
+        /* Mobile Search Bar Visibility */
+        .mobile-search-container { display: block; }
+
+        .hero-mini { margin-top: 1rem; margin-bottom: 1rem; }
+        .hero-mini h1 { font-size: 1.25rem; }
+        
+        #toast-container { bottom: 1rem; right: 1rem; left: 1rem; }
+        .toast { width: 100%; justify-content: center; }
+        
+        .modal-body { flex-direction: column; height: auto; max-height: 90vh; overflow-y: auto;}
+        .preview-pane { min-height: 200px; }
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div class="app-shell">
+      
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <a href="#" class="brand">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+              <line x1="3" x2="21" y1="9" y2="9"></line>
+              <line x1="9" x2="9" y1="21" y2="9"></line>
+            </svg>
+            <span>SvGify</span>
+          </a>
+          <button id="sidebar-close-btn" title="Close Menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="sidebar-content scroll-area">
+          <div class="search-wrapper">
+            <svg class="search-icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="search-bar" placeholder="Search..." autocomplete="off">
+            
+            <div class="search-dropdown" id="search-dropdown">
+              <div class="search-dropdown-header">
+                <span id="search-results-count">Results</span>
+              </div>
+              <div class="search-dropdown-content" id="search-dropdown-content"></div>
+            </div>
+          </div>
+
+          <div class="sidebar-section-title">Categories</div>
+          <nav id="category-tabs"></nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <p>© 2024 SvGify. Open Source.</p>
+        </div>
+      </aside>
+
+      <!-- Mobile Backdrop -->
+      <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+
+      <!-- Main Content -->
+      <main class="main">
+        <header class="main-header">
+          <div style="display:flex; align-items:center;">
+            <!-- Mobile Menu Toggle (Visible < 768px) -->
+            <button id="mobile-menu-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            
+            <div class="header-title">
+              <span id="current-section-name">All Icons</span>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="btn-icon" title="Toggle theme">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+              </svg>
+            </button>
+            
+            <!-- Favorites Filter (Header) -->
+            <button id="favorites-btn" class="btn-icon" title="Show Favorites">
+              <!-- Outline Heart (Clean SVG) -->
+              <svg id="fav-icon-outline" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              <!-- Filled Heart (Clean SVG, Initially Hidden) -->
+              <svg id="fav-icon-filled" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:none;">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+
+            <!-- Download -->
+            <button id="download-btn" class="btn-primary" title="Download Pack">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span style="display:none; @media(min-width:640px){display:inline;}">Download</span>
+            </button>
+            
+            <!-- Hidden elements for compatibility -->
+            <button id="mobile-menu-close" style="display:none;"></button>
+          </div>
+        </header>
+
+        <div class="content-area scroll-area">
+          <div class="hero-mini">
+            <h1>Icon Collection</h1>
+            <p>
+              Beautifully crafted, open source icons. 
+              <span id="icon-count" style="font-weight:600; color:var(--text-main);">1500+</span> symbols ready for production.
+            </p>
+            <div id="search-results-section" style="display:none; margin-top:1rem;">
+                <h2 id="search-results-title" style="font-size:1rem;"></h2>
+                <p id="search-results-subtitle" style="font-size:0.875rem; color:var(--text-muted);"></p>
+            </div>
+          </div>
+
+          <!-- Mobile Only Search Bar -->
+          <div class="mobile-search-container">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+             <input type="text" id="mobile-search-bar" placeholder="Search icons directly..." autocomplete="off">
+          </div>
+
+          <div id="browse-section">
+            <div id="icon-grid-wrapper">
+              <div id="icon-grid">
+                <!-- Icons injected here -->
+              </div>
+              
+              <div id="no-results">
+                <p>No icons found matching your query.</p>
+              </div>
+
+              <div class="load-more-container">
+                <button id="load-more-btn" class="load-more-btn">Load More Icons</button>
+                <div class="pagination-info">
+                  <span id="showing-count"></span> <span id="total-count"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Modal -->
+    <div id="modal-overlay">
+      <div id="modal-content">
+        <div class="modal-body">
+          <!-- Left: Preview -->
+          <div class="preview-pane">
+            <div id="modal-preview"></div>
+          </div>
+
+          <!-- Right: Details -->
+          <div class="details-pane">
+            <div class="modal-top-bar">
+              <span id="modal-icon-name">Icon</span>
+              
+              <div class="modal-actions">
+                <!-- Favorite Toggle inside Modal -->
+                <button id="modal-favorite-btn" class="modal-btn" title="Toggle Favorite">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </button>
+                <button id="close-modal" class="modal-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="controls-container">
+                <!-- Color Row -->
+                <div class="control-row">
+                    <span class="control-label">Color</span>
+                    <div class="color-picker-wrapper">
+                        <div class="color-circle" id="color-preview-circle"></div>
+                        <span class="color-text" id="color-text-value">currentColor</span>
+                        <input type="color" id="icon-color" value="#09090b" />
+                    </div>
+                </div>
+
+                <!-- Stroke Width Row -->
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <div class="control-row">
+                        <span class="control-label">Stroke width</span>
+                        <span class="control-value" id="stroke-width-value">2px</span>
+                    </div>
+                    <input type="range" id="stroke-width" min="0.5" max="3" step="0.25" value="2" />
+                </div>
+
+                <!-- Size Row -->
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <div class="control-row">
+                        <span class="control-label">Size</span>
+                        <span class="control-value" id="icon-size-value">24px</span>
+                    </div>
+                    <input type="range" id="icon-size" min="16" max="96" value="24" />
+                </div>
+
+                <!-- Absolute Stroke Width Row -->
+                <div class="control-row">
+                    <span class="control-label">Absolute Stroke width</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="absolute-stroke">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="code-container">
+              <button id="copy-button">Copy JSX</button>
+              <code id="modal-svg-code"></code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+      let iconDatabase = null;
+      let favorites = new Set();
+      let showingFavorites = false; // State for filter
+
+      // --- Toast Notification System ---
+      function showToast(message, iconSvg = '') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        
+        // Default icon if none provided (check mark)
+        const icon = iconSvg || '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        
+        toast.innerHTML = `${icon}<span>${message}</span>`;
+        container.appendChild(toast);
+
+        // Remove after 3s
+        setTimeout(() => {
+          toast.classList.add('hiding');
+          toast.addEventListener('animationend', () => toast.remove());
+        }, 3000);
+      }
+
+      async function loadIconData() {
+        try {
+          const response = await fetch("data.json");
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          iconDatabase = await response.json();
+          console.log("Icon data loaded:", iconDatabase.icons.length);
+        } catch (error) {
+          console.error("Error loading icon data:", error);
+          iconDatabase = { icons: [] };
+          // Error Toast
+          showToast("Error loading data.json", '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#ef4444;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>');
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        await loadIconData();
+        if (!iconDatabase || !iconDatabase.icons) return;
+
+        // DOM Elements
+        const iconGrid = document.getElementById("icon-grid");
+        const searchBar = document.getElementById("search-bar");
+        const categoryTabs = document.getElementById("category-tabs");
+        const noResultsMsg = document.getElementById("no-results");
+        const themeToggle = document.getElementById("theme-toggle");
+        const currentSectionName = document.getElementById("current-section-name");
+        
+        // Header Buttons
+        const favoritesBtnHeader = document.getElementById("favorites-btn");
+        const favIconOutline = document.getElementById("fav-icon-outline");
+        const favIconFilled = document.getElementById("fav-icon-filled");
+        const downloadBtn = document.getElementById("download-btn");
+        const mobileSearchBar = document.getElementById("mobile-search-bar");
+
+        // Modal Elements
+        const modalOverlay = document.getElementById("modal-overlay");
+        const closeModalBtn = document.getElementById("close-modal");
+        const modalIconName = document.getElementById("modal-icon-name");
+        const modalPreview = document.getElementById("modal-preview");
+        const modalSvgCode = document.getElementById("modal-svg-code");
+        const copyButton = document.getElementById("copy-button");
+        const modalFavoriteBtn = document.getElementById("modal-favorite-btn");
+        
+        // New Control Elements
+        const iconColorPicker = document.getElementById("icon-color");
+        const colorPreviewCircle = document.getElementById("color-preview-circle");
+        const colorTextValue = document.getElementById("color-text-value");
+        const iconSizeSlider = document.getElementById("icon-size");
+        const iconSizeValue = document.getElementById("icon-size-value");
+        const strokeWidthSlider = document.getElementById("stroke-width");
+        const strokeWidthValue = document.getElementById("stroke-width-value");
+        const absoluteStrokeToggle = document.getElementById("absolute-stroke");
+
+        // Pagination
+        const loadMoreBtn = document.getElementById("load-more-btn");
+        const loadMoreContainer = document.querySelector(".load-more-container");
+        const showingCount = document.getElementById("showing-count");
+        const totalCount = document.getElementById("total-count");
+
+        // State
+        let currentFilter = "";
+        let currentCategory = "all";
+        let iconsPerLoad = 60;
+        let currentlyDisplayed = 0;
+        let filteredIcons = [];
+        let currentModalIcon = null;
+
+        // Theme
+        function applyTheme(theme) {
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("theme", theme);
+          const defaultColor = theme === "dark" ? "#fafafa" : "#09090b";
+          if(iconColorPicker) {
+              iconColorPicker.value = defaultColor;
+              updateColorUI(defaultColor);
+          }
+        }
+
+        function toggleTheme() {
+          const currentTheme = document.documentElement.getAttribute("data-theme");
+          const newTheme = currentTheme === "light" ? "dark" : "light";
+          applyTheme(newTheme);
+        }
+
+        function initTheme() {
+          const savedTheme = localStorage.getItem("theme") || "light";
+          applyTheme(savedTheme);
+          if(themeToggle) themeToggle.addEventListener("click", toggleTheme);
+        }
+
+        // --- Favorites Logic ---
+        if(modalFavoriteBtn) {
+          modalFavoriteBtn.addEventListener("click", () => {
+            if(!currentModalIcon) return;
+            
+            const name = currentModalIcon.name;
+            if(favorites.has(name)) {
+              favorites.delete(name);
+              modalFavoriteBtn.classList.remove("active");
+              showToast("Removed from favorites");
+            } else {
+              favorites.add(name);
+              modalFavoriteBtn.classList.add("active");
+              showToast("Added to favorites");
+            }
+            
+            if(showingFavorites) renderIcons();
+          });
+        }
+
+        if(favoritesBtnHeader) {
+          favoritesBtnHeader.addEventListener("click", () => {
+            showingFavorites = !showingFavorites;
+            
+            if(showingFavorites) {
+              favoritesBtnHeader.classList.add("active");
+              favIconOutline.style.display = "none";
+              favIconFilled.style.display = "block";
+              currentSectionName.textContent = "My Favorites";
+              document.querySelectorAll("#category-tabs .tab-button").forEach(b => b.classList.remove("active"));
+            } else {
+              favoritesBtnHeader.classList.remove("active");
+              favIconOutline.style.display = "block";
+              favIconFilled.style.display = "none";
+              currentSectionName.textContent = currentCategory === 'all' ? "All Icons" : currentCategory;
+              
+              const activeTab = document.querySelector(`.tab-button[data-category="${currentCategory}"]`);
+              if(activeTab) activeTab.classList.add("active");
+            }
+            renderIcons();
+          });
+        }
+
+        if(downloadBtn) {
+          downloadBtn.addEventListener("click", () => {
+            showToast("Download started...", '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>');
+          });
+        }
+
+        // Categories
+        function createCategoryTabs() {
+          const categories = ["all", ...new Set(iconDatabase.icons.map((icon) => icon.category))];
+          categories.forEach((category) => {
+            const button = document.createElement("button");
+            button.className = "tab-button";
+            button.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            button.dataset.category = category;
+            if (category === "all") button.classList.add("active");
+            button.addEventListener("click", handleCategoryClick);
+            categoryTabs.appendChild(button);
+          });
+        }
+
+        function handleCategoryClick(e) {
+          if(showingFavorites) {
+            showingFavorites = false;
+            favoritesBtnHeader.classList.remove("active");
+            favIconOutline.style.display = "block";
+            favIconFilled.style.display = "none";
+          }
+
+          // Clear both search inputs
+          searchBar.value = "";
+          if(mobileSearchBar) mobileSearchBar.value = "";
+          currentFilter = "";
+          hideSearchDropdown();
+          
+          document.querySelectorAll("#category-tabs .tab-button").forEach((btn) => btn.classList.remove("active"));
+          e.target.classList.add("active");
+          
+          currentCategory = e.target.dataset.category;
+          if(currentSectionName) currentSectionName.textContent = e.target.textContent;
+          
+          const mobileOverlay = document.getElementById("mobile-menu-overlay");
+          const sidebar = document.getElementById("sidebar");
+          if(mobileOverlay) mobileOverlay.classList.remove("active");
+          if(sidebar) sidebar.classList.remove("active");
+
+          renderIcons();
+          document.querySelector('.content-area').scrollTo({top:0, behavior:'smooth'});
+        }
+
+        // Rendering
+        function renderIcons(reset = true) {
+          if (reset) {
+            iconGrid.innerHTML = "";
+            currentlyDisplayed = 0;
+            
+            filteredIcons = iconDatabase.icons.filter((icon) => {
+              if (showingFavorites) {
+                if(!favorites.has(icon.name)) return false;
+              } else {
+                const matchesCategory = currentCategory === "all" || icon.category === currentCategory;
+                if (!matchesCategory) return false;
+              }
+              const matchesSearch = icon.name.toLowerCase().includes(currentFilter);
+              return matchesSearch;
+            });
+          }
+
+          if (filteredIcons.length === 0) {
+            noResultsMsg.style.display = "block";
+            noResultsMsg.innerHTML = showingFavorites 
+                ? `<p>No favorites yet.<br><span style="font-size:0.8em; opacity:0.7;">Click an icon to add it.</span></p>`
+                : `<p>No icons found.</p>`;
+            loadMoreContainer.classList.remove("show");
+            if(showingCount) showingCount.textContent = "";
+            if(totalCount) totalCount.textContent = "";
+            return;
+          } else {
+            noResultsMsg.style.display = "none";
+          }
+
+          const iconsToShow = filteredIcons.slice(currentlyDisplayed, currentlyDisplayed + iconsPerLoad);
+
+          iconsToShow.forEach((icon) => {
+            const card = document.createElement("div");
+            card.className = "icon-card";
+            card.title = icon.name;
+            card.innerHTML = `${icon.svg}<span>${icon.name}</span>`;
+            card.addEventListener("click", () => openModal(icon));
+            iconGrid.appendChild(card);
+          });
+
+          currentlyDisplayed += iconsToShow.length;
+          updatePaginationInfo();
+
+          if (currentlyDisplayed < filteredIcons.length) {
+            loadMoreContainer.classList.add("show");
+            loadMoreBtn.disabled = false;
+          } else {
+            loadMoreContainer.classList.remove("show");
+          }
+        }
+
+        function loadMoreIcons() {
+          loadMoreBtn.disabled = true;
+          loadMoreBtn.textContent = "Loading...";
+          setTimeout(() => {
+            renderIcons(false);
+            loadMoreBtn.textContent = "Load More Icons";
+            loadMoreBtn.disabled = false; 
+          }, 200);
+        }
+
+        function updatePaginationInfo() {
+          if (showingCount && totalCount) {
+            showingCount.textContent = `Showing ${currentlyDisplayed} of`;
+            totalCount.textContent = filteredIcons.length;
+          }
+        }
+
+        // Modal
+        function openModal(icon) {
+          currentModalIcon = icon; 
+          
+          // Reset Controls
+          const currentTheme = document.documentElement.getAttribute("data-theme");
+          const defaultColor = currentTheme === "dark" ? "#fafafa" : "#09090b";
+          iconColorPicker.value = defaultColor;
+          updateColorUI(defaultColor);
+          
+          iconSizeSlider.value = 24; 
+          iconSizeValue.textContent = "24px";
+          strokeWidthSlider.value = 2;
+          strokeWidthValue.textContent = "2px";
+          absoluteStrokeToggle.checked = false;
+
+          modalIconName.textContent = icon.name;
+          modalPreview.innerHTML = icon.svg;
+          
+          if(favorites.has(icon.name)) {
+            modalFavoriteBtn.classList.add("active");
+          } else {
+            modalFavoriteBtn.classList.remove("active");
+          }
+          
+          updatePreview();
+          updateModalCode();
+          modalOverlay.classList.add("show");
+        }
+
+        function closeModal() {
+          modalOverlay.classList.remove("show");
+          copyButton.textContent = "Copy JSX";
+          currentModalIcon = null;
+        }
+
+        function updatePreview() {
+            const previewSvg = modalPreview.querySelector("svg");
+            if (!previewSvg) return;
+
+            const color = iconColorPicker.value;
+            const size = iconSizeSlider.value + "px";
+            const stroke = strokeWidthSlider.value;
+            const isAbsolute = absoluteStrokeToggle.checked;
+
+            // Apply styles to SVG
+            previewSvg.style.color = color;
+            previewSvg.style.width = size;
+            previewSvg.style.height = size;
+            previewSvg.style.transition = "all 0.2s ease";
+            previewSvg.setAttribute("stroke-width", stroke);
+            
+            // Handle absolute stroke width
+            const paths = previewSvg.querySelectorAll("path, circle, line, polyline, rect, ellipse");
+            paths.forEach(p => {
+                if(isAbsolute) {
+                    p.setAttribute("vector-effect", "non-scaling-stroke");
+                } else {
+                    p.removeAttribute("vector-effect");
+                }
+            });
+        }
+
+        function updateColorUI(color) {
+            colorPreviewCircle.style.backgroundColor = color;
+            colorTextValue.textContent = color;
+        }
+
+        function updateModalCode() {
+          const rawSvg = modalPreview.innerHTML;
+          // Clean up for code view
+          const formattedSvg = rawSvg
+            .replace(/ (style="[^"]*")/g, "") // Remove styles added by JS
+            .replace(/><path/g, ">\n  <path")
+            .replace(/><line/g, ">\n  <line")
+            .replace(/><circle/g, ">\n  <circle")
+            .replace(/><rect/g, ">\n  <rect")
+            .replace(/><polygon/g, ">\n  <polygon")
+            .replace(/><polyline/g, ">\n  <polyline")
+            .replace(/><ellipse/g, ">\n  <ellipse")
+            .replace(/<\/svg>/g, "\n</svg>");
+
+          modalSvgCode.textContent = formattedSvg;
+        }
+
+        // Control Listeners
+        iconColorPicker.addEventListener("input", (e) => {
+          const newColor = e.target.value;
+          updateColorUI(newColor);
+          updatePreview();
+          updateModalCode(); // Optional: remove if you don't want color in code snippet
+        });
+
+        iconSizeSlider.addEventListener("input", (e) => {
+          const newSize = e.target.value;
+          iconSizeValue.textContent = newSize + "px";
+          updatePreview();
+          updateModalCode();
+        });
+
+        strokeWidthSlider.addEventListener("input", (e) => {
+            const newStroke = e.target.value;
+            strokeWidthValue.textContent = newStroke + "px";
+            updatePreview();
+            updateModalCode();
+        });
+
+        absoluteStrokeToggle.addEventListener("change", () => {
+            updatePreview();
+            updateModalCode();
+        });
+
+        copyButton.addEventListener("click", () => {
+          const code = modalSvgCode.textContent;
+          navigator.clipboard.writeText(code).then(() => {
+            copyButton.textContent = "Copied!";
+            showToast("Copied JSX to clipboard");
+            setTimeout(() => copyButton.textContent = "Copy JSX", 2000);
+          });
+        });
+
+        if(closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+        if(modalOverlay) modalOverlay.addEventListener("click", (e) => {
+          if (e.target === modalOverlay) closeModal();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && modalOverlay.classList.contains("show")) closeModal();
+        });
+
+        // Search Logic (Shared and Mobile)
+        const searchDropdown = document.getElementById("search-dropdown");
+        const searchDropdownContent = document.getElementById("search-dropdown-content");
+        const searchResultsCount = document.getElementById("search-results-count");
+        let searchTimeout;
+
+        function performSearch(val) {
+            currentFilter = val;
+            clearTimeout(searchTimeout);
+
+            if (val.length > 0) {
+                // If using main search bar (desktop), show dropdown
+                // On mobile, just filter grid
+                if(window.innerWidth > 768) {
+                    showSearchDropdown();
+                    updateSearchResults(val);
+                }
+                searchTimeout = setTimeout(() => renderIcons(), 300);
+            } else {
+                hideSearchDropdown();
+                currentFilter = "";
+                renderIcons();
+            }
+        }
+
+        // Desktop Sidebar Search
+        searchBar.addEventListener("input", (e) => {
+            performSearch(e.target.value.toLowerCase().trim());
+        });
+
+        // Mobile Main Search
+        if(mobileSearchBar) {
+            mobileSearchBar.addEventListener("input", (e) => {
+                performSearch(e.target.value.toLowerCase().trim());
+            });
+        }
+
+        function showSearchDropdown() { searchDropdown.classList.add("show"); }
+        function hideSearchDropdown() { searchDropdown.classList.remove("show"); }
+
+        function updateSearchResults(val) {
+          const results = iconDatabase.icons.filter(i => i.name.toLowerCase().includes(val)).slice(0, 5);
+          searchResultsCount.textContent = results.length > 0 ? "Top Matches" : "No matches";
+          
+          if(results.length === 0) {
+            searchDropdownContent.innerHTML = `<div style="padding:0.75rem; font-size:0.8rem; color:var(--text-muted);">No icons found</div>`;
+            return;
+          }
+
+          searchDropdownContent.innerHTML = results.map(icon => `
+            <div class="search-result-item" onclick="handleSearchItemClick('${icon.name}')">
+               ${icon.svg.replace('width="20"', 'width="16"').replace('height="20"', 'height="16"')}
+               <span class="search-result-name">${icon.name}</span>
+               <span class="search-result-category">${icon.category}</span>
+            </div>
+          `).join("");
+        }
+
+        window.handleSearchItemClick = (name) => {
+          hideSearchDropdown();
+          searchBar.value = name;
+          if(mobileSearchBar) mobileSearchBar.value = name; // Sync inputs
+          currentFilter = name.toLowerCase();
+          if(showingFavorites) favoritesBtnHeader.click();
+          renderIcons();
+          setTimeout(() => {
+             const target = Array.from(document.querySelectorAll(".icon-card")).find(c => c.innerText === name);
+             if(target) target.click();
+          }, 100);
+        };
+
+        document.addEventListener("click", (e) => {
+          if(!searchBar.contains(e.target) && !searchDropdown.contains(e.target)) hideSearchDropdown();
+        });
+
+        // Mobile Menu Logic
+        const mobileBtn = document.getElementById("mobile-menu-btn");
+        const sidebar = document.getElementById("sidebar");
+        const mobileOverlay = document.getElementById("mobile-menu-overlay");
+        const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+
+        function closeSidebar() {
+          sidebar.classList.remove("active");
+          mobileOverlay.classList.remove("active");
+        }
+
+        function openSidebar() {
+          sidebar.classList.add("active");
+          mobileOverlay.classList.add("active");
+        }
+
+        if(mobileBtn) {
+          mobileBtn.addEventListener("click", openSidebar);
+        }
+
+        if(mobileOverlay) {
+          mobileOverlay.addEventListener("click", closeSidebar);
+        }
+        
+        if(sidebarCloseBtn) {
+          sidebarCloseBtn.addEventListener("click", closeSidebar);
+        }
+
+        if(loadMoreBtn) loadMoreBtn.addEventListener("click", loadMoreIcons);
+
+        // Init
+        initTheme();
+        createCategoryTabs();
+        renderIcons();
+      });
+    </script>
+  </body>
+</html>
